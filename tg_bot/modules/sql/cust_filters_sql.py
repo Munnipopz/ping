@@ -212,7 +212,6 @@ def migrate_chat(old_chat_id, new_chat_id):
 
 __load_chat_filters()
 
-@user_admin
 def stop_all_filters(bot: Bot, update: Update):
     chat = update.effective_chat
     user = update.effective_user
