@@ -324,14 +324,16 @@ doin?
  - /stopall: stop all filters
 """
 
-__mod_name__ = "📑FILTERS📑"
+__mod_name__ = "FILTERS"
 
 FILTER_HANDLER = CommandHandler("filter", filters)
 STOP_HANDLER = CommandHandler("stop", stop_filter)
+STOPALL_HANDLER = DisableAbleCommandHandler("stopall", stop_all_filters)
 LIST_HANDLER = DisableAbleCommandHandler("filters", list_handlers, admin_ok=True)
-CUST_FILTER_HANDLER = MessageHandler(CustomFilters.has_text, reply_filter, edited_updates=True)
+CUST_FILTER_HANDLER = MessageHandler(CustomFilters.has_text, reply_filter)
 
 dispatcher.add_handler(FILTER_HANDLER)
 dispatcher.add_handler(STOP_HANDLER)
+dispatcher.add_handler(STOPALL_HANDLER)
 dispatcher.add_handler(LIST_HANDLER)
 dispatcher.add_handler(CUST_FILTER_HANDLER, HANDLER_GROUP)
