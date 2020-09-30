@@ -211,3 +211,60 @@ def migrate_chat(old_chat_id, new_chat_id):
 
 
 __load_chat_filters()
+
+def stop_all_filters(bot: Bot, update: Update):
+    chat = update.effective_chat
+    user = update.effective_user
+    message = update.effective_message
+
+    if chat.type == "private":
+        chat.title = "local filters"
+    else:
+        owner = chat.get_member(user.id)
+        chat.title = chat.title
+        if owner.status != 'creator':
+            message.reply_text("You must be this chat creator.")
+            return
+
+    x = 0
+    flist = sql.get_chat_triggers(chat.id)
+
+    if not flist:
+        message.reply_text("There aren't any active filters in {}!".format(chat.title))
+        return
+
+    f_flist = []
+    for f in flist:
+        x += 1
+        f_flist.append(f)
+
+    for fx in f_flist:
+        sql.remove_filter(chat.id, fx)
+
+    message.reply_text("{} filters from this chat have been removed.".format(x))
+    
+    
+def __stats__():
+    return "{} filters, across {} chats.".format(sql.num_filters(), sql.num_chats())
+
+
+def __migrate__(old_chat_id, new_chat_id):
+    sql.migrate_chat(old_chat_id, new_chat_id)
+
+
+def __chat_settings__(chat_id, user_id):
+    cust_filters = sql.get_chat_triggers(chat_id)
+    return "There are `{}` custom filters here.".format(len(cust_filters))
+
+
+__help__ = """
+ - /filters: list all active filters in this chat.
+
+*Admin only:*
+ - /filter <keyword> <reply message>: add a filter to this chat. The bot will now reply that message whenever 'keyword'\
+is mentioned. If you reply to a sticker with a keyword, the bot will reply with that sticker. NOTE: all filter \
+keywords are in lowercase. If you want your keyword to be a sentence, use quotes. eg: /filter "hey there" How you \
+doin?
+ - /stop <filter keyword>: stop that filter.
+ - /stopall: stop all filters
+"""
