@@ -22,7 +22,7 @@ PM_START_TEXT = """
 
 ```You You Can Add any kind of Filters to This Bot!```
 
-*Channel:© @DX_Botz*
+*Group:© @mpazaanbot*
 
 /help for more details..
 """
